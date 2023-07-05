@@ -116,11 +116,30 @@ namespace component
 			return components[typeid(T).hash_code()][id];
 		}
 
+		template<class T>
+		Array<T*>* GetComponentArr()
+		{
+			Array<T*>* arr = nullptr;
+			
+			for (auto& h : components[typeid(T).hash_code()])
+			{
+				if (arr == nullptr) arr = new Array<T*>();
+				*arr<< (T*)(h.second);
+			}
+			return arr;
+		}
+
 		//コンポーネントをHashTableで取得。使いどころは複数のコンポーネントが同一の型で重複しているときとか。
 		template<class T>
-		HashTable<const String&, T*>* GetComponentHash()
+		HashTable<String, T*>* GetComponentHash()
 		{
-			return components.contains(typeid(T).hash_code()) ? components[typeid(T).hash_code()] : nullptr;
+			HashTable<String, T*>* ht=nullptr;
+			if (not components.contains(typeid(T).hash_code()))
+				return nullptr;
+
+			for (const auto& h : components[typeid(T).hash_code()])
+				ht->emplace(h.first, (T*)h.second);
+			return ht;
 		}
 
 		//コンポーネントをアップデート　派生クラスでも呼び出して
