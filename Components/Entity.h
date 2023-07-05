@@ -120,7 +120,10 @@ namespace component
 		Array<T*>* GetComponentArr()
 		{
 			Array<T*>* arr = nullptr;
-			
+
+			if (not components.contains(typeid(T).hash_code()))
+				return nullptr;
+
 			for (auto& h : components[typeid(T).hash_code()])
 			{
 				if (arr == nullptr) arr = new Array<T*>();
@@ -138,7 +141,10 @@ namespace component
 				return nullptr;
 
 			for (const auto& h : components[typeid(T).hash_code()])
+			{
+				if (ht == nullptr) ht = new HashTable<String, T*>();
 				ht->emplace(h.first, (T*)h.second);
+			}
 			return ht;
 		}
 
